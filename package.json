@@ -4,17 +4,19 @@
   "description": "Run tests against multiple implementations and compare their outputs",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "files": [
+    "./dist"
+  ],
   "scripts": {
     "start": "npx tsc --build -w",
     "build": "rm -rf dist/* && tsc --build",
     "test": "npx jest",
     "test:watch": "npx jest --watch",
-    "prepublish": "./scripts/prepublish.sh"
+    "prepublishOnly": "./scripts/prepublish.sh"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "private": true,
   "dependencies": {
     "@types/lodash": "^4.14.191",
     "lodash": "^4.17.21"
