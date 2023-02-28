@@ -127,3 +127,81 @@ export const runComparison = (
 
   return () => runBroker.results;
 };
+
+const compareObjectsWithDates = (
+  a: UnknownObject,
+  b: UnknownObject,
+  dateFields: FieldList = ['created', 'updated', 'date']
+) => {
+  const ax = extractFields(a, dateFields);
+  const bx = extractFields(b, dateFields);
+
+  // console.log('comparing static objects');
+  if (!isEqual(ax.static, bx.static)) {
+    return false;
+  }
+
+  // console.log(ax);
+  // console.log(bx);
+  return dateFields.reduce((ok, fieldName) => {
+    if (!ok) return false;
+    // console.log('comparing', fieldName);
+    const dateAUnix = new Date(ax.fields[fieldName]).getTime();
+    const dateBUnix = new Date(bx.fields[fieldName]).getTime();
+    // console.log(dateAUnix, dateBUnix, Math.abs(dateAUnix - dateBUnix));
+    const approxOk = approximatelyEqual(dateAUnix, dateBUnix, {
+      tolerance: 10000,
+    });
+    // console.log('approximatelyEqual', approxOk);
+    return approxOk;
+  }, true);
+};
+
+type FieldList = string[];
+type UnknownObject = Record<string, unknown>;
+
+export const withDateFields =
+  (dateFields: FieldList): Comparator =>
+  (a: unknown, b: unknown) =>
+    compareObjectsWithDates(a as UnknownObject, b as UnknownObject, dateFields);
+
+export const ignoreFields =
+  (fields: FieldList): Comparator =>
+  (a: unknown, b: unknown) => {
+    const ax = extractFields(a as UnknownObject, fields);
+    const bx = extractFields(b as UnknownObject, fields);
+
+    return isEqual(ax.static, bx.static);
+  };
+
+type ExtractedObject = {
+  fields: Record<string, any>;
+  static: Record<string, any>;
+};
+export const extractFields = (
+  raw: UnknownObject,
+  fields: FieldList
+): ExtractedObject =>
+  fields.reduce(
+    (processed, fieldName) => {
+      const { [fieldName]: fieldValue, ...rest } = processed.static;
+      return {
+        fields: { ...processed.fields, [fieldName]: fieldValue },
+        static: rest,
+      };
+    },
+    { fields: {}, static: raw }
+  );
+
+export const approximatelyEqual = (
+  a: number,
+  b: number,
+  userOpts: { tolerance?: number }
+) => {
+  const options = {
+    tolerance: 1,
+    ...userOpts,
+  };
+
+  return Math.abs(a - b) <= options.tolerance;
+};

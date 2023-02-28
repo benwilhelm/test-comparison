@@ -1,12 +1,5 @@
 import { isEqual } from 'lodash';
-import {
-  ResultCb,
-  TestFn,
-  Comparator,
-  Factor,
-  Run,
-  runComparison,
-} from './lib';
+import { TestFn, Comparator, Factor, Run, runComparison } from './lib';
 
 describe('runComparison()', () => {
   it('does the needful', async () => {
