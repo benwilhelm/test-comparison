@@ -131,7 +131,8 @@ export const runComparison = (
 const compareObjectsWithDates = (
   a: UnknownObject,
   b: UnknownObject,
-  dateFields: FieldList = ['created', 'updated', 'date']
+  dateFields: FieldList = ['created', 'updated', 'date'],
+  toleranceMs: number = 10000
 ) => {
   const ax = extractFields(a, dateFields);
   const bx = extractFields(b, dateFields);
@@ -150,7 +151,7 @@ const compareObjectsWithDates = (
     const dateBUnix = new Date(bx.fields[fieldName]).getTime();
     // console.log(dateAUnix, dateBUnix, Math.abs(dateAUnix - dateBUnix));
     const approxOk = approximatelyEqual(dateAUnix, dateBUnix, {
-      tolerance: 10000,
+      tolerance: toleranceMs,
     });
     // console.log('approximatelyEqual', approxOk);
     return approxOk;
@@ -161,9 +162,14 @@ type FieldList = string[];
 type UnknownObject = Record<string, unknown>;
 
 export const withDateFields =
-  (dateFields: FieldList): Comparator =>
+  (dateFields: FieldList, toleranceMs: number = 10000): Comparator =>
   (a: unknown, b: unknown) =>
-    compareObjectsWithDates(a as UnknownObject, b as UnknownObject, dateFields);
+    compareObjectsWithDates(
+      a as UnknownObject,
+      b as UnknownObject,
+      dateFields,
+      toleranceMs
+    );
 
 export const ignoreFields =
   (fields: FieldList): Comparator =>
