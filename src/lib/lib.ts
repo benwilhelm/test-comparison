@@ -6,7 +6,7 @@ interface Comparison {
 }
 export interface Run {
   name: string;
-  checks: Comparison[];
+  checks: Record<string, Comparison>;
 }
 
 class RunBroker {
@@ -16,18 +16,21 @@ class RunBroker {
 
   check(
     runIndex: number,
+    maybeCheckIndex: string | null,
     comparison: Comparison,
     cb?: (result: Result) => void
   ) {
     const run = this._runs[runIndex] || {
       name: this.factors[runIndex].name,
-      checks: [],
+      checks: {},
     };
+
+    const checkIndex =
+      maybeCheckIndex || String(Object.keys(run.checks).length);
     this._runs[runIndex] = run;
-    run.checks.push(comparison);
+    run.checks[checkIndex] = comparison;
 
     if (cb && runIndex === this.factors.length - 1) {
-      const checkIndex = run.checks.length - 1;
       const result = this.getResult(checkIndex);
       cb(result);
     }
@@ -39,13 +42,13 @@ class RunBroker {
 
   get results(): Result[] {
     const runs = this.runs;
-    return runs[0].checks.map((check, checkIndex) =>
+    return Object.keys(runs[0].checks).map((checkIndex) =>
       this.getResult(checkIndex)
     );
   }
 
-  getResult(resultIndex: number) {
-    if (!this.runs[this.factors.length - 1].checks[resultIndex]) {
+  getResult(resultIndex: string) {
+    if (this.runs.length < this.factors.length) {
       throw new Error("Can't get that result until all runs are complete");
     }
 
@@ -89,7 +92,7 @@ export type Comparator = (a: unknown, b: unknown) => boolean;
 export type TestFn = (factor: Factor, compare: CompareFunc) => void;
 export type ResultCb = (results: Result[]) => void;
 
-type CompareFunc = (
+export type CompareFunc = (
   value: unknown,
   message: string,
   comparator?: Comparator
@@ -97,6 +100,7 @@ type CompareFunc = (
 
 interface RunOptions {
   immediateCheck?: (result: Result) => void;
+  getCheckIndex?: () => string;
 }
 
 export const runComparison = (
@@ -115,8 +119,11 @@ export const runComparison = (
       comp?: Comparator
     ) => {
       const comparator = comp || isEqual;
+      const checkIndex = options.getCheckIndex ? options.getCheckIndex() : null;
+
       runBroker.check(
         factorIndex,
+        checkIndex,
         { value, message, comparator },
         options.immediateCheck
       );
@@ -126,6 +133,12 @@ export const runComparison = (
   });
 
   return () => runBroker.results;
+};
+
+const getCheckIndex = () => {
+  const idx = expect.getState().currentTestName;
+  console.log(idx);
+  return idx || null;
 };
 
 const compareObjectsWithDates = (

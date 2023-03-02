@@ -129,20 +129,28 @@ const runFactory = (): Run[] => {
   return [
     {
       name: 'Run 1',
-      checks: [
-        { message: 'Comparison 1', value: 1, comparator: isEqual },
-        { message: 'Comparison 2', value: 'foo', comparator: isEqual },
-        { message: 'Comparison 3', value: { bif: 'baz' }, comparator: isEqual },
-      ],
+      checks: {
+        '0': { message: 'Comparison 1', value: 1, comparator: isEqual },
+        '1': { message: 'Comparison 2', value: 'foo', comparator: isEqual },
+        '2': {
+          message: 'Comparison 3',
+          value: { bif: 'baz' },
+          comparator: isEqual,
+        },
+      },
     },
 
     {
       name: 'Run 2',
-      checks: [
-        { message: 'Comparison 1', value: 1, comparator: isEqual },
-        { message: 'Comparison 2', value: 'bar', comparator: isEqual },
-        { message: 'Comparison 3', value: { bif: 'baz' }, comparator: isEqual },
-      ],
+      checks: {
+        '0': { message: 'Comparison 1', value: 1, comparator: isEqual },
+        '1': { message: 'Comparison 2', value: 'bar', comparator: isEqual },
+        '2': {
+          message: 'Comparison 3',
+          value: { bif: 'baz' },
+          comparator: isEqual,
+        },
+      },
     },
   ];
 };

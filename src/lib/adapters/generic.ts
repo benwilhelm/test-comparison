@@ -3,7 +3,7 @@
  * describe/it into the global scope.
  */
 
-import { Factor, TestFn, runComparison, Result } from '../lib';
+import { Factor, CompareFunc, TestFn, runComparison, Result } from '../lib';
 
 class ResultError extends Error {
   constructor(result: Result) {
@@ -32,12 +32,30 @@ const assertResultOk = (result: Result) => {
 };
 
 export const describeMultiple = async (factors: Factor[], testFn: TestFn) => {
+  let testIndex = -1;
+  let compareIndex = -1;
+
   const testFnWithDescribe: TestFn = (factor, compare) =>
     describe(factor.name, () => {
-      testFn(factor, compare);
+      beforeAll(() => {
+        testIndex = -1;
+      });
+
+      beforeEach(() => {
+        testIndex++;
+        compareIndex = -1;
+      });
+
+      const indexingCompare: CompareFunc = (...args) => {
+        compareIndex++;
+        return compare(...args);
+      };
+
+      testFn(factor, indexingCompare);
     });
 
   runComparison(factors, testFnWithDescribe, {
     immediateCheck: assertResultOk,
+    getCheckIndex: () => `${testIndex}-${compareIndex}`,
   });
 };
