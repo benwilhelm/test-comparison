@@ -1,6 +1,6 @@
 {
   "name": "test-comparison",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Run tests against multiple implementations and compare their outputs",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
