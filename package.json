@@ -1,6 +1,11 @@
 {
   "name": "test-comparison",
   "version": "0.1.4",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/benwilhelm/test-comparison.git"
+  },
+  "homepage": "https://github.com/benwilhelm/test-comparison.git",
   "description": "Run tests against multiple implementations and compare their outputs",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
