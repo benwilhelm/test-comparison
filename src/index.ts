@@ -8,4 +8,4 @@ export {
   approximatelyEqual,
 } from './lib/lib';
 
-export { describeMultiple } from './lib/adapters/generic';
+export { describeMultiple } from './lib/adapters';

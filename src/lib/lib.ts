@@ -135,12 +135,6 @@ export const runComparison = (
   return () => runBroker.results;
 };
 
-const getCheckIndex = () => {
-  const idx = expect.getState().currentTestName;
-  console.log(idx);
-  return idx || null;
-};
-
 const compareObjectsWithDates = (
   a: UnknownObject,
   b: UnknownObject,

@@ -1,5 +1,5 @@
-import { Comparator } from '../lib';
-import { describeMultiple } from './generic';
+import { Comparator } from './lib';
+import { describeMultiple } from './adapters';
 
 /**
  * @todo - This isn't truly test the adapter, because it doesn't

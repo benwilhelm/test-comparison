@@ -3,7 +3,7 @@
  * describe/it into the global scope.
  */
 
-import { Factor, CompareFunc, TestFn, runComparison, Result } from '../lib';
+import { Factor, CompareFunc, TestFn, runComparison, Result } from './lib';
 
 class ResultError extends Error {
   constructor(result: Result) {
@@ -35,9 +35,14 @@ export const describeMultiple = async (factors: Factor[], testFn: TestFn) => {
   let testIndex = -1;
   let compareIndex = -1;
 
+  // could be running in a number of test frameworks, some of which
+  // use before, some of which use beforeAll.
+  // @todo - come up with a better adapter mechanism
+  const beforeAllHook = typeof before === 'undefined' ? beforeAll : before;
+
   const testFnWithDescribe: TestFn = (factor, compare) =>
     describe(factor.name, () => {
-      beforeAll(() => {
+      beforeAllHook(() => {
         testIndex = -1;
       });
 
