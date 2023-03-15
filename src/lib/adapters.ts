@@ -3,6 +3,7 @@
  * describe/it into the global scope.
  */
 
+import { diff } from 'jest-diff'
 import { Factor, CompareFunc, TestFn, runComparison, Result } from './lib';
 
 class ResultError extends Error {
@@ -12,11 +13,17 @@ class ResultError extends Error {
   }
 
   private static formatMessage(result: Result) {
-    const runMessage = result.runs.map((run) =>
-      [`\nResult for ${run.name}`, JSON.stringify(run.value, null, 2)].join(
-        '\n'
-      )
-    );
+    
+    const runMessage = []
+    for (let i=1; i<result.runs.length; i++) {
+      const runA = result.runs[i];
+      const runB = result.runs[i-1];
+
+      runMessage.push(diff(runA.value, runB.value, {
+        aAnnotation: runA.name,
+        bAnnotation: runB.name
+      }))
+    }
 
     return [
       `DescribeMultiple Comparison failed for\n'${result.message}'`,
