@@ -6,7 +6,7 @@
     "url": "https://github.com/benwilhelm/test-comparison.git"
   },
   "homepage": "https://github.com/benwilhelm/test-comparison.git",
-  "description": "Run tests against multiple implementations and compare their outputs",
+  "description": "Safely perform complex refactors by running tests against multiple implementations and compare their outputs",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
